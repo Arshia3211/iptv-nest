@@ -1,26 +1,36 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSeasonDto } from './dto/season.dto';
-import { UpdateSeasonDto } from './dto/update-season.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreateSeasonDto, UpdateSeasonDto} from './dto/season.dto';
+import { SeasonEntity } from './entities/season.entity';
 
 @Injectable()
 export class SeasonService {
-  create(createSeasonDto: CreateSeasonDto) {
-    return 'This action adds a new season';
+  constructor(
+    @InjectRepository(SeasonEntity)
+    private seasonRepository: Repository<SeasonEntity>,
+  ) {}
+
+  async create(createSeasonDto: CreateSeasonDto) {
+    const season = this.seasonRepository.create(createSeasonDto);
+    return await this.seasonRepository.save(season);
   }
 
-  findAll() {
-    return `This action returns all season`;
+  async findAll() {
+    return await this.seasonRepository.find({ relations: ['series', 'episodes'] });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} season`;
+  async findOne(id: number) {
+    return await this.seasonRepository.findOne({ where: { id }, relations: ['series', 'episodes'] });
   }
 
-  update(id: number, updateSeasonDto: UpdateSeasonDto) {
-    return `This action updates a #${id} season`;
+  async update(id: number, updateSeasonDto: UpdateSeasonDto) {
+    await this.seasonRepository.update(id, updateSeasonDto);
+    return this.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} season`;
+  async remove(id: number) {
+    await this.seasonRepository.softDelete(id);
+    return { message: `Season #${id} soft deleted` };
   }
 }

@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { SeasonService } from './season.service';
-import { CreateSeasonDto } from './dto/season.dto';
-import { UpdateSeasonDto } from './dto/update-season.dto';
+import { CreateSeasonDto, UpdateSeasonDto} from './dto/season.dto';
+
 
 @Controller('season')
 export class SeasonController {

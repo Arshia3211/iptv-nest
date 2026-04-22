@@ -1,29 +1,40 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateGenreDto , UpdateGenreDto} from './dto/genre.dto';
-
+import { GenreEntity } from './entities/genre.entity';
 
 @Injectable()
 export class GenreService {
-  getAll() {
-    throw new Error('Method not implemented.');
-  }
-  create(createGenreDto: CreateGenreDto) {
-    return 'This action adds a new genre';
+  constructor(
+    @InjectRepository(GenreEntity)
+    private genreRepository: Repository<GenreEntity>,
+  ) {}
+
+  async getAll() {
+    return await this.genreRepository.find({ relations: ['streams', 'genreSeries'] });
   }
 
-  findAll() {
-    return `This action returns all genre`;
+  async create(createGenreDto: CreateGenreDto) {
+    const genre = this.genreRepository.create(createGenreDto);
+    return await this.genreRepository.save(genre);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} genre`;
+  async findAll() {
+    return await this.genreRepository.find({ relations: ['streams', 'genreSeries'] });
   }
 
-  update(id: number, updateGenreDto: UpdateGenreDto) {
-    return `This action updates a #${id} genre`;
+  async findOne(id: number) {
+    return await this.genreRepository.findOne({ where: { id }, relations: ['streams', 'genreSeries'] });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} genre`;
+  async update(id: number, updateGenreDto: UpdateGenreDto) {
+    await this.genreRepository.update(id, updateGenreDto);
+    return this.findOne(id);
+  }
+
+  async remove(id: number) {
+    await this.genreRepository.softDelete(id);
+    return { message: `Genre #${id} soft deleted` };
   }
 }

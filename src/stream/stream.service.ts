@@ -1,26 +1,36 @@
 import { Injectable } from '@nestjs/common';
-import { CreateStreamDto } from './dto/stream.dto';
-import { UpdateStreamDto } from './dto/update-stream.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreateStreamDto , UpdateStreamDto } from './dto/stream.dto';
+import { StreamEntity } from './entities/stream.entity';
 
 @Injectable()
 export class StreamService {
-  create(createStreamDto: CreateStreamDto) {
-    return 'This action adds a new stream';
+  constructor(
+    @InjectRepository(StreamEntity)
+    private streamRepository: Repository<StreamEntity>,
+  ) {}
+
+  async create(createStreamDto: CreateStreamDto) {
+    const stream = this.streamRepository.create(createStreamDto);
+    return await this.streamRepository.save(stream);
   }
 
-  findAll() {
-    return `This action returns all stream`;
+  async findAll() {
+    return await this.streamRepository.find({ relations: ['genres', 'episodes', 'file'] });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} stream`;
+  async findOne(id: number) {
+    return await this.streamRepository.findOne({ where: { id }, relations: ['genres', 'episodes', 'file'] });
   }
 
-  update(id: number, updateStreamDto: UpdateStreamDto) {
-    return `This action updates a #${id} stream`;
+  async update(id: number, updateStreamDto: UpdateStreamDto) {
+    await this.streamRepository.update(id, updateStreamDto);
+    return this.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} stream`;
+  async remove(id: number) {
+    await this.streamRepository.softDelete(id);
+    return { message: `Stream #${id} soft deleted` };
   }
 }

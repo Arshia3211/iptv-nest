@@ -1,26 +1,36 @@
 import { Injectable } from '@nestjs/common';
-import { CreateEpisodeDto } from './dto/episode.dto';
-import { UpdateEpisodeDto } from './dto/update-episode.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreateEpisodeDto, UpdateEpisodeDto } from './dto/episode.dto';
+import { EpisodeEntity } from './entities/episode.entity';
 
 @Injectable()
 export class EpisodeService {
-  create(createEpisodeDto: CreateEpisodeDto) {
-    return 'This action adds a new episode';
+  constructor(
+    @InjectRepository(EpisodeEntity)
+    private episodeRepository: Repository<EpisodeEntity>,
+  ) {}
+
+  async create(createEpisodeDto: CreateEpisodeDto) {
+    const episode = this.episodeRepository.create(createEpisodeDto);
+    return await this.episodeRepository.save(episode);
   }
 
-  findAll() {
-    return `This action returns all episode`;
+  async findAll() {
+    return await this.episodeRepository.find({ relations: ['season', 'file', 'stream'] });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} episode`;
+  async findOne(id: number) {
+    return await this.episodeRepository.findOne({ where: { id }, relations: ['season', 'file', 'stream'] });
   }
 
-  update(id: number, updateEpisodeDto: UpdateEpisodeDto) {
-    return `This action updates a #${id} episode`;
+  async update(id: number, updateEpisodeDto: UpdateEpisodeDto) {
+    await this.episodeRepository.update(id, updateEpisodeDto);
+    return this.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} episode`;
+  async remove(id: number) {
+    await this.episodeRepository.softDelete(id);
+    return { message: `Episode #${id} soft deleted` };
   }
 }

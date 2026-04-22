@@ -1,26 +1,37 @@
 import { Injectable } from '@nestjs/common';
-import { CreateFileDto } from './dto/create-file.dto';
-import { UpdateFileDto } from './dto/update-file.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreateFileDto, UpdateFileDto } from './dto/file.dto';
+
+import { FileEntity } from './entities/file.entity';
 
 @Injectable()
 export class FileService {
-  create(createFileDto: CreateFileDto) {
-    return 'This action adds a new file';
+  constructor(
+    @InjectRepository(FileEntity)
+    private fileRepository: Repository<FileEntity>,
+  ) {}
+
+  async create(createFileDto: CreateFileDto) {
+    const file = this.fileRepository.create(createFileDto);
+    return await this.fileRepository.save(file);
   }
 
-  findAll() {
-    return `This action returns all file`;
+  async findAll() {
+    return await this.fileRepository.find({ relations: ['episodes', 'streams'] });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} file`;
+  async findOne(id: number) {
+    return await this.fileRepository.findOne({ where: { id }, relations: ['episodes', 'streams'] });
   }
 
-  update(id: number, updateFileDto: UpdateFileDto) {
-    return `This action updates a #${id} file`;
+  async update(id: number, updateFileDto: UpdateFileDto) {
+    await this.fileRepository.update(id, updateFileDto);
+    return this.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} file`;
+  async remove(id: number) {
+    await this.fileRepository.softDelete(id);
+    return { message: `File #${id} soft deleted` };
   }
 }
