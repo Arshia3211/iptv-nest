@@ -16,12 +16,12 @@ export class SeriesService {
     return await this.seriesRepository.save(series);
   }
 
-  async findAll() {
-    return await this.seriesRepository.find({ relations: ['createdBy', 'genreSeries', 'seasons'] });
+async findAll() {
+    return await this.seriesRepository.find({ relations: ['createdBy'] });
   }
 
   async findOne(id: number) {
-    return await this.seriesRepository.findOne({ where: { id }, relations: ['createdBy', 'genreSeries', 'seasons'] });
+    return await this.seriesRepository.findOne({ where: { id }, relations: ['createdBy'] });
   }
 
   async update(id: number, updateSeriesDto: UpdateSeriesDto) {

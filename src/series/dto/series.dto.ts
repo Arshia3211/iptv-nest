@@ -9,7 +9,7 @@ export class CreateSeriesDto {
   description?: string;
 
   @IsNumber()
-  createdById!: number;
+  genreId!: number;
 
   @IsNumber()
   genreIds!: number[];

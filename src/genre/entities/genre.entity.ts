@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
 import { GenreSeriesEntity } from '../../genre-series/entities/genre-series.entity';
 import { StreamEntity } from '../../stream/entities/stream.entity';
 
@@ -18,12 +18,5 @@ export class GenreEntity {
   @JoinTable()
   streams!: StreamEntity[];
 
-  @CreateDateColumn()
-  createdAt!: Date;
 
-  @UpdateDateColumn()
-  updatedAt!: Date;
-
-  @DeleteDateColumn()
-  deletedAt?: Date;
 }

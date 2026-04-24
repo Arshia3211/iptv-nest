@@ -1,5 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, OneToMany, ManyToMany, JoinTable, ManyToOne, JoinColumn } from 'typeorm';
-
 import { GenreSeriesEntity } from '../../genre-series/entities/genre-series.entity';
 import { SeasonEntity } from '../../season/entities/season.entity';
 import { UserEntity } from '../../user/entities/user.entity';
