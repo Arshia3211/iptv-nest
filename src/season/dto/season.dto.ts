@@ -1,7 +1,6 @@
 import { IsNotEmpty, IsString, IsNumber, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
 
-
 export class CreateSeasonDto {
   @IsNotEmpty()
   @IsNumber()
@@ -13,11 +12,10 @@ export class CreateSeasonDto {
   @Type(() => Number)
   number!: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  title!: string;
+  title?: string;
 }
-
 
 export class UpdateSeasonDto {
   @IsOptional()

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, OneToMany, ManyToMany, JoinTable, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable, ManyToOne, JoinColumn } from 'typeorm';
 import { GenreSeriesEntity } from '../../genre-series/entities/genre-series.entity';
 import { SeasonEntity } from '../../season/entities/season.entity';
 import { UserEntity } from '../../user/entities/user.entity';
@@ -27,13 +27,4 @@ export class SeriesEntity {
 
   @OneToMany(() => SeasonEntity, season => season.series)
   seasons!: SeasonEntity[];
-
-  @CreateDateColumn()
-  createdAt!: Date;
-
-  @UpdateDateColumn()
-  updatedAt!: Date;
-
-  @DeleteDateColumn()
-  deletedAt?: Date;
 }

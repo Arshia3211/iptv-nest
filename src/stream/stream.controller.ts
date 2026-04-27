@@ -1,7 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { StreamService } from './stream.service';
-import { CreateStreamDto, UpdateStreamDto} from './dto/stream.dto';
+import { CreateStreamDto, UpdateStreamDto } from './dto/stream.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('stream')
 export class StreamController {
   constructor(private readonly streamService: StreamService) {}

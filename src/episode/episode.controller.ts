@@ -1,14 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  BadRequestException,
+} from '@nestjs/common';
 import { EpisodeService } from './episode.service';
-import { CreateEpisodeDto , UpdateEpisodeDto } from './dto/episode.dto';
-;
-
+import { CreateEpisodeDto, UpdateEpisodeDto } from './dto/episode.dto';
 @Controller('episode')
 export class EpisodeController {
   constructor(private readonly episodeService: EpisodeService) {}
 
   @Post()
-  create(@Body() createEpisodeDto: CreateEpisodeDto) {
+  async create(@Body() createEpisodeDto: CreateEpisodeDto) { if(!createEpisodeDto.seasonId) {
+      throw new BadRequestException('seasonId is required');
+    }
     return this.episodeService.create(createEpisodeDto);
   }
 

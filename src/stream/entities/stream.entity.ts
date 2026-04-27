@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { GenreEntity } from '../../genre/entities/genre.entity';
 import { EpisodeEntity } from '../../episode/entities/episode.entity';
 import { FileEntity } from '../../file/entities/file.entity';
@@ -32,14 +32,4 @@ export class StreamEntity {
 
   @OneToMany(() => EpisodeEntity, episode => episode.stream)
   episodes!: EpisodeEntity[];
-
-  @CreateDateColumn()
-  createdAt!: Date;
-
-  @UpdateDateColumn()
-  updatedAt!: Date;
-
-  @DeleteDateColumn()
-  deletedAt?: Date;
-  createdBy: any;
 }

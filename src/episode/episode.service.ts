@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateEpisodeDto, UpdateEpisodeDto } from './dto/episode.dto';
@@ -17,11 +17,20 @@ export class EpisodeService {
   }
 
   async findAll() {
-    return await this.episodeRepository.find({ relations: ['season', 'file', 'stream'] });
+    return await this.episodeRepository.find({
+      relations: ['season', 'file', 'stream'],
+    });
   }
 
   async findOne(id: number) {
-    return await this.episodeRepository.findOne({ where: { id }, relations: ['season', 'file', 'stream'] });
+    const episode = await this.episodeRepository.findOne({
+      where: { id },
+      relations: ['season', 'file', 'stream'],
+    });
+    if (!episode) {
+      throw new NotFoundException(`Episode with ID ${id} not found`);
+    }
+    return episode;
   }
 
   async update(id: number, updateEpisodeDto: UpdateEpisodeDto) {
@@ -31,6 +40,6 @@ export class EpisodeService {
 
   async remove(id: number) {
     await this.episodeRepository.softDelete(id);
-    return { message: `Episode #${id} soft deleted` };
+    return { message: `Episode #${id}  deleted` };
   }
 }

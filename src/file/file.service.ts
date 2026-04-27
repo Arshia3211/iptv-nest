@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateFileDto, UpdateFileDto } from './dto/file.dto';
-
+import { CreateFileDto } from './dto/file.dto';
 import { FileEntity } from './entities/file.entity';
 
 @Injectable()
@@ -11,6 +10,17 @@ export class FileService {
     @InjectRepository(FileEntity)
     private fileRepository: Repository<FileEntity>,
   ) {}
+
+  async saveFile(file: Express.Multer.File) {
+    const fileData = {
+      filename: file.originalname,
+      path: file.path,
+      mimetype: file.mimetype,
+      size: file.size,
+    };
+    const newFile = this.fileRepository.create(fileData);
+    return await this.fileRepository.save(newFile);
+  }
 
   async create(createFileDto: CreateFileDto) {
     const file = this.fileRepository.create(createFileDto);
@@ -22,16 +32,17 @@ export class FileService {
   }
 
   async findOne(id: number) {
-    return await this.fileRepository.findOne({ where: { id }, relations: ['episodes', 'streams'] });
+    const file = await this.fileRepository.findOne({
+      where: { id },
+      relations: ['episodes', 'streams'],
+    });
+    if (!file) {
+      throw new NotFoundException(`File with ID ${id} not found`);
+    }
+    return file;
   }
-
-  async update(id: number, updateFileDto: UpdateFileDto) {
-    await this.fileRepository.update(id, updateFileDto);
-    return this.findOne(id);
-  }
-
   async remove(id: number) {
     await this.fileRepository.softDelete(id);
-    return { message: `File #${id} soft deleted` };
+    return { message: `File #${id}  deleted` };
   }
 }

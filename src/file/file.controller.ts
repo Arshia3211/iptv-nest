@@ -1,11 +1,37 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  UseInterceptors,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UploadedFile,
+  UseGuards,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { FileService } from './file.service';
-import { CreateFileDto, UpdateFileDto } from './dto/file.dto';
-
+import { CreateFileDto} from './dto/file.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { multerOptions } from './multer.config';
 
 @Controller('file')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
+
+  @Post('upload')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('file', multerOptions))
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      return { message: 'No file uploaded' };
+    }
+    return this.fileService.saveFile(file);
+  }
 
   @Post()
   create(@Body() createFileDto: CreateFileDto) {
@@ -22,10 +48,6 @@ export class FileController {
     return this.fileService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFileDto: UpdateFileDto) {
-    return this.fileService.update(+id, updateFileDto);
-  }
 
   @Delete(':id')
   remove(@Param('id') id: string) {

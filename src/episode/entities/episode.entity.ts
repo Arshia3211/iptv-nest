@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { SeasonEntity } from '../../season/entities/season.entity';
 import { FileEntity } from '../../file/entities/file.entity';
 import { StreamEntity } from '../../stream/entities/stream.entity';
@@ -31,13 +31,4 @@ export class EpisodeEntity {
 
   @Column({ nullable: true })
   streamId?: number;
-
-  @CreateDateColumn()
-  createdAt!: Date;
-
-  @UpdateDateColumn()
-  updatedAt!: Date;
-
-  @DeleteDateColumn()
-  deletedAt?: Date;
 }
